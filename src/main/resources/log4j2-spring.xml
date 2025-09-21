@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="60">
+    <Properties>
+        <!-- These are placeholders, will be overridden via ENV or Spring -->
+        <Property name="ENV">${env:SPRING_PROFILES_ACTIVE:-dev}</Property>
+        <Property name="LOG_DIR">${env:LOG_DIR:-logs}</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console (STDOUT) -->
+        <!--   <Console name="Console" target="SYSTEM_OUT">
+             <PatternLayout pattern="${LOG_PATTERN}" />
+         </Console>-->
+
+         <!-- File appender with rolling policy -->
+        <RollingFile name="RollingFile"
+                     fileName="${LOG_DIR}/application-${ENV}.log"
+                     filePattern="${LOG_DIR}/archive/application-${ENV}-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- Your package -->
+        <Logger name="com.yourcompany" level="INFO" additivity="false">
+            <!--<AppenderRef ref="Console" />-->
+            <AppenderRef ref="RollingFile" />
+        </Logger>
+
+        <!-- Optional: Reduce Spring Framework noise -->
+        <Logger name="org.springframework" level="WARN"/>
+
+        <!-- Root Logger -->
+        <Root level="INFO">
+            <!--  <AppenderRef ref="Console"/>-->
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+</Configuration>

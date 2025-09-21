@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+aws:
+  appconfig:
+    application: LoggerConfigApp        # AppConfig Application name or id
+    environment: ${APP_ENV:${spring.profiles.active:dev}}
+    # dynamic: first checks APP_ENV env var, else spring profile, else 'dev'
+    profile: LoggerProfile              # config profile name or id
+    region: ap-south-1
+    poll-interval-ms: 60000
+
+spring:
+  application:
+    name: library
+
+logging:
+  level:
+    root: INFO
+    org.example: INFO
+    com.zaxxer.hikari: DEBUG
+    org.springframework: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ./logs/application.log   # Dev-specific overrides
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,loggers
+  endpoint:
+    health:
+      enabled: true
+      # show-details: always   # uncomment if you want detailed health info
